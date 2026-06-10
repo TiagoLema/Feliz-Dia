@@ -70,6 +70,7 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* --- ANIMACIONES DE EMOJIS Y ESCUDOS --- */
         .emoji {
             position: absolute;
             font-size: 2.4rem;
@@ -78,9 +79,16 @@
             top: -120px;
         }
 
+        /* Clase especial para que los escudos caigan sin girar tan raro */
+        .shield-drop {
+            position: absolute;
+            animation: floatDown linear infinite;
+            top: -120px;
+        }
+
         @keyframes floatDown {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(125vh) rotate(360deg); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(125vh); }
         }
 
         @keyframes emojiTwist {
@@ -103,9 +111,10 @@
             50% { box-shadow: 0 10px 24px rgba(0,0,0,0.3), 0 0 18px rgba(105, 214, 255, 0.28); }
         }
 
+        /* CORRECCIÓN: Quitamos el rotateX de acá para que no bloquee el giro */
         @keyframes cardFloat {
-            0%, 100% { transform: translateY(0) rotateX(0deg); }
-            50% { transform: translateY(-10px) rotateX(0deg); }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         .top-instructions {
@@ -125,6 +134,8 @@
             perspective: 1500px;
             margin-bottom: 20px;
             z-index: 10;
+            /* CORRECCIÓN: La animación de flotar se la damos al contenedor */
+            animation: cardFloat 6s ease-in-out infinite; 
         }
 
         .flashcard {
@@ -134,11 +145,6 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
-            animation: cardFloat 6s ease-in-out infinite;
-        }
-
-        .flashcard:hover {
-            transform: translateY(-3px);
         }
 
         .flashcard.flipped {
@@ -284,6 +290,7 @@
 </head>
 <body>
 
+    <!-- Capa de fondos dinámicos -->
     <div id="dynamic-bg"></div>
     <div id="confetti-container"></div>
     <div class="celebration-text" id="celebrationText">¡Gracias por ser el mejor papá!</div>
@@ -292,6 +299,7 @@
         Presiona "Espacio" para voltear la tarjeta, "← / →" para navegar
     </div>
 
+    <!-- Contenedor de Tarjeta -->
     <div class="flashcard-container">
         <div class="flashcard" id="flashcard">
             
@@ -322,6 +330,7 @@
         </div>
     </div>
 
+    <!-- Controles -->
     <div class="controls">
         <button class="btn-nav" id="btnPrev" onclick="prevCard()">←</button>
         <button class="btn-nav" id="btnNext" onclick="nextCard()">→</button>
@@ -390,11 +399,11 @@
                 pregunta: "9 de diciembre de 2018. Madrid.",
                 respuesta: "¡Y va el tercero! Una de las mayores alegrías compartidas gracias a River. Gracias por esta pasión.",
                 imagen: "8_river.jpg",
-                bgType: "river" // Activa el nuevo fondo estilo camiseta y los escudos cayendo
+                bgType: "river" // ACTIVA EL FONDO BLANCO Y ROJO CON ESCUDOS
             },
             {
                 pregunta: "La familia se agranda. Una nueva generación.",
-                respuesta: "El nacimiento de Mateo. Mira de fiero que era de chiquito.",
+                respuesta: "El nacimiento de Mateo. Miralo de fiero que era de chiquito.",
                 imagen: "9_mateo.jpg",
                 bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
                 bgType: "emojis",
@@ -432,24 +441,23 @@
             dynamicBg.innerHTML = '';
 
             if (data.bgType === 'river') {
-                // Fondo blanco con banda roja diagonal de arriba-derecha a abajo-izquierda
-                dynamicBg.style.background = 'linear-gradient(to bottom left, #ffffff 42%, #E30613 42%, #E30613 58%, #ffffff 58%)';
+                // Fondo River: Blanco con banda roja cruzada
+                dynamicBg.style.background = 'linear-gradient(to bottom left, #ffffff 40%, #E30613 40%, #E30613 60%, #ffffff 60%)';
                 
                 // Lluvia de escudos de River
                 for (let i = 0; i < 35; i++) {
                     const shieldEl = document.createElement('img');
                     shieldEl.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Logo_River_Plate.png/500px-Logo_River_Plate.png';
-                    shieldEl.style.position = 'absolute';
-                    shieldEl.style.width = `${randomBetween(30, 75)}px`; // Tamaños variados
-                    shieldEl.style.left = `${randomBetween(-10, 100)}vw`;
-                    shieldEl.style.opacity = `${randomBetween(0.5, 0.95)}`;
-                    shieldEl.style.animation = `floatDown linear infinite`;
-                    shieldEl.style.animationDuration = `${randomBetween(6, 12)}s`;
-                    shieldEl.style.animationDelay = `${randomBetween(0, 10)}s`;
-                    shieldEl.style.top = '-120px'; // Arrancan escondidos arriba
+                    shieldEl.className = 'shield-drop'; // Usamos la clase para que caigan limpios
+                    shieldEl.style.width = `${randomBetween(35, 75)}px`;
+                    shieldEl.style.left = `${randomBetween(-5, 95)}vw`;
+                    shieldEl.style.opacity = `${randomBetween(0.6, 0.95)}`;
+                    shieldEl.style.animationDuration = `${randomBetween(6, 11)}s`;
+                    shieldEl.style.animationDelay = `${randomBetween(0, 8)}s`;
                     dynamicBg.appendChild(shieldEl);
                 }
             } else if (data.bgType === 'emojis') {
+                // El código original de emojis que tenías
                 dynamicBg.style.background = data.bgColor;
                 for (let i = 0; i < 45; i++) {
                     const emojiEl = document.createElement('div');
@@ -517,7 +525,7 @@
                     showCelebrationText(true);
                     launchConfetti(40);
                 } else if (data.bgType === 'river') {
-                    launchConfetti(20);
+                    launchConfetti(20); // Confeti extra para River
                 }
             }
         }
