@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día del Padre</title>
+    <style>
+        /* --- ESTILOS BASE Y VARIABLES --- */
+        :root {
+            --bg-current: linear-gradient(135deg, #1e1e24 0%, #151518 100%);
+            --card-bg: #2d2f33;
+            --text-main: #ffffff;
+            --text-muted: #a0aab2;
+            --btn-bg: #232528;
+            --btn-hover: #3a3d42;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: var(--bg-current);
+            transition: background 0.8s ease-in-out;
+            color: var(--text-main);
+            overflow: hidden;
+        }
+
+        /* --- INSTRUCCIONES SUPERIORES --- */
+        .top-instructions {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+            text-align: center;
+            opacity: 0.8;
+            letter-spacing: 0.5px;
+        }
+
+        /* --- CONTENEDOR DE LA TARJETA (3D) --- */
+        .flashcard-container {
+            width: 90%;
+            max-width: 600px;
+            height: 400px;
+            perspective: 1500px;
+            margin-bottom: 30px;
+        }
+
+        .flashcard {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 24px;
+        }
+
+        .flashcard.flipped {
+            transform: rotateX(180deg);
+        }
+
+        /* --- CARAS DE LA TARJETA --- */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            background-color: var(--card-bg);
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            box-sizing: border-box;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Cabecera de la tarjeta (Contador) */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        /* Frente: Pregunta */
+        .front .question {
+            font-size: 28px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        /* Dorso: Respuesta y Foto */
+        .back {
+            transform: rotateX(180deg);
+            background-color: #24262a; /* Un tono apenitas más oscuro atrás */
+        }
+
+        .back .photo-container {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            background-color: #1a1c1e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .back .answer {
+            font-size: 18px;
+            line-height: 1.5;
+            color: #e0e6ed;
+        }
+
+        .flip-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: auto;
+            text-align: center;
+            opacity: 0.6;
+        }
+
+        /* --- CONTROLES INFERIORES --- */
+        .controls {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .btn-nav {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--btn-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background-color: var(--btn-hover);
+            transform: scale(1.05);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Responsive para celulares */
+        @media (max-width: 600px) {
+            .flashcard-container { height: 450px; }
+            .front .question { font-size: 22px; }
+            .top-instructions { display: none; } /* Ocultar en móviles, usar gestos */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-instructions">
+        Presiona "Espacio" para voltear la tarjeta, "← / →" para navegar
+    </div>
+
+    <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+            
+            <div class="card-face front">
+                <div class="card-header">
+                    <span id="counterFront">1/10</span>
+                    <span>⋮</span>
+                </div>
+                <div class="card-content">
+                    <div class="question" id="questionText">Cargando...</div>
+                </div>
+                <div class="flip-hint">Ver respuesta</div>
+            </div>
+
+            <div class="card-face back">
+                <div class="card-header">
+                    <span id="counterBack">1/10</span>
+                    <span>⋮</span>
+                </div>
+                <div class="card-content">
+                    <div class="photo-container">
+                        <img id="cardImage" src="" alt="Foto familiar">
+                    </div>
+                    <div class="answer" id="answerText">Cargando...</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-nav" id="btnPrev" onclick="prevCard()">←</button>
+        <button class="btn-nav" id="btnNext" onclick="nextCard()">→</button>
+    </div>
+
+    <script>
+        // --- DATOS DE LAS FLASHCARDS ---
+        // Aquí están las 10 tarjetas que armaste. Cada una tiene un fondo dinámico único.
+        const cardsData = [
+            {
+                pregunta: "¿En qué año comenzó la historia del mejor papá?",
+                respuesta: "1989. El año de tu nacimiento y el inicio de todo.",
+                imagen: "1_nacimiento.jpg",
+                fondo: "radial-gradient(circle at top left, #1f2735, #121418)" // Azul oscuro profundo
+            },
+            {
+                pregunta: "Un viaje al pasado... ¿Te acordás de esta época?",
+                respuesta: "Vos en el jardín. Seguro ya eras igual desde chiquito.",
+                imagen: "2_jardin.jpg",
+                fondo: "radial-gradient(circle at top right, #2a3525, #121511)" // Verde oscuro sutil
+            },
+            {
+                pregunta: "18 de abril de 2004. Una fecha que cambió la historia.",
+                respuesta: "El día que conociste a mamá. Ahí se plantó la semilla de nuestra familia.",
+                imagen: "3_mama.jpg",
+                fondo: "radial-gradient(circle at bottom left, #3d1b22, #151112)" // Bordó/Rojo oscuro romántico
+            },
+            {
+                pregunta: "12 de diciembre de 2004. ¿Qué pasó de importante?",
+                respuesta: "¡Nací yo! Tiago. Tu primer gran dolor de cabeza (y orgullo).",
+                imagen: "4_nacimiento_tiago.jpg",
+                fondo: "linear-gradient(135deg, #1c2b3b, #0f1620)" // Azul acero
+            },
+            {
+                pregunta: "Recuerdos de mi infancia a tu lado...",
+                respuesta: "Siempre acompañándome, enseñándome cosas y haciéndome reír con tus chistes.",
+                imagen: "5_tiago_chico.jpg",
+                fondo: "linear-gradient(to right, #2c251f, #15120f)" // Sepia oscuro nostálgico
+            },
+            {
+                pregunta: "Una nueva etapa: Mi inicio en la escuela.",
+                respuesta: "Nunca faltó tu apoyo incondicional. Un pilar en cada paso que daba.",
+                imagen: "6_escuela.jpg",
+                fondo: "linear-gradient(135deg, #203541, #10191f)" // Turquesa oscuro
+            },
+            {
+                pregunta: "El laburante número uno.",
+                respuesta: "Dándolo todo en la empresa. Un ejemplo gigante de esfuerzo silencioso.",
+                imagen: "7_empresa.jpg",
+                fondo: "linear-gradient(to bottom, #2b2b2b, #111111)" // Gris industrial
+            },
+            {
+                pregunta: "9 de diciembre de 2018. Madrid.",
+                respuesta: "¡Y va el tercero! Una de las mayores alegrías gracias a River.",
+                imagen: "8_river.jpg",
+                fondo: "linear-gradient(135deg, #4a1515 0%, #1a1a1a 50%, #4a1515 100%)" // Rojo, negro y rojo (River)
+            },
+            {
+                pregunta: "La familia se agranda. Una nueva preocupación.",
+                respuesta: "El nacimiento de Mateo. Miralo de fiero que era de chiquito.",
+                imagen: "9_mateo.jpg",
+                fondo: "radial-gradient(circle at center, #352a1a, #14110a)" // Dorado/Ámbar oscuro
+            },
+            {
+                pregunta: "¿Qué te puedo decir hoy?",
+                respuesta: "Gracias por los detalles, los asados y los chistes. Sos el mejor papá del mundo. ¡Feliz día y Feliz cumpleños!",
+                imagen: "10_actual.jpg",
+                fondo: "linear-gradient(135deg, #1a2a3a, #2a1a2a)" // Mezcla elegante para el final
+            }
+        ];
+
+        // --- LÓGICA DEL SISTEMA ---
+        let currentIndex = 0;
+        const flashcard = document.getElementById('flashcard');
+        const questionText = document.getElementById('questionText');
+        const answerText = document.getElementById('answerText');
+        const cardImage = document.getElementById('cardImage');
+        const counterFront = document.getElementById('counterFront');
+        const counterBack = document.getElementById('counterBack');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+
+        function updateUI() {
+            const data = cardsData[currentIndex];
+            
+            // Actualizar textos y foto
+            questionText.innerText = data.pregunta;
+            answerText.innerText = data.respuesta;
+            cardImage.src = data.imagen;
+            
+            // Actualizar contadores
+            const textCounter = `${currentIndex + 1}/${cardsData.length}`;
+            counterFront.innerText = textCounter;
+            counterBack.innerText = textCounter;
+
+            // Cambiar el fondo dinámicamente
+            document.body.style.background = data.fondo;
+
+            // Actualizar estado de botones
+            btnPrev.disabled = currentIndex === 0;
+            btnNext.disabled = currentIndex === cardsData.length - 1;
+        }
+
+        function flipCard() {
+            flashcard.classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            if (currentIndex < cardsData.length - 1) {
+                // Si la tarjeta está girada, la devolvemos al frente antes de cambiar
+                if(flashcard.classList.contains('flipped')) {
+                    flashcard.classList.remove('flipped');
+                    setTimeout(() => {
+                        currentIndex++;
+                        updateUI();
+                    }, 400); // Esperar que termine la animación
+                } else {
+                    currentIndex++;
+                    updateUI();
+                }
+            }
+        }
+
+        function prevCard() {
+            if (currentIndex > 0) {
+                if(flashcard.classList.contains('flipped')) {
+                    flashcard.classList.remove('flipped');
+                    setTimeout(() => {
+                        currentIndex--;
+                        updateUI();
+                    }, 400);
+                } else {
+                    currentIndex--;
+                    updateUI();
+                }
+            }
+        }
+
+        // --- EVENTOS DE CLIC Y TECLADO ---
+        flashcard.addEventListener('click', flipCard);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault(); // Evita que la página baje al apretar espacio
+                flipCard();
+            } else if (e.code === 'ArrowRight') {
+                nextCard();
+            } else if (e.code === 'ArrowLeft') {
+                prevCard();
+            }
+        });
+
+        // Iniciar la aplicación
+        updateUI();
+
+    </script>
+</body>
+</html>
