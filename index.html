@@ -17,7 +17,7 @@
             min-height: 100vh;
             color: #ffffff;
             overflow: hidden;
-            background-color: #111; /* Color base por si algo falla */
+            background-color: #111; 
         }
 
         /* --- CONTENEDOR DE FONDOS DINÁMICOS --- */
@@ -32,26 +32,26 @@
             overflow: hidden;
         }
 
-        /* Animación de emojis flotantes */
+        /* Animación de Emojis Cayendo (Lluvia) */
         .emoji {
             position: absolute;
-            font-size: 2.5rem;
-            opacity: 0.4;
-            animation: floatUp linear infinite;
-            bottom: -50px;
+            font-size: 2.8rem;
+            opacity: 0.5;
+            animation: floatDown linear infinite;
+            top: -100px; /* Arrancan escondidos arriba */
         }
 
-        @keyframes floatUp {
+        @keyframes floatDown {
             0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-110vh) rotate(360deg); }
+            100% { transform: translateY(120vh) rotate(360deg); } /* Caen hasta abajo de la pantalla */
         }
 
-        /* Fondo especial de River Plate */
+        /* Fondo especial de River Plate (Bernabéu) */
         .river-bg {
             width: 100%;
             height: 100%;
             position: relative;
-            background-image: url('https://images.unsplash.com/photo-1518605368461-1e1e1141703c?w=1600'); /* Estadio */
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Estadio_Santiago_Bernab%C3%A9u_%282014%29.jpg/1280px-Estadio_Santiago_Bernab%C3%A9u_%282014%29.jpg'); 
             background-size: cover;
             background-position: center;
             display: flex;
@@ -67,20 +67,36 @@
         }
 
         .score-board {
-            position: relative;
+            position: absolute;
+            width: 100%;
+            height: 100%;
             display: flex;
+            justify-content: space-between; /* Manda los equipos a los bordes */
             align-items: center;
-            gap: 20px;
-            font-size: 15vw;
-            font-weight: 900;
-            color: rgba(255, 255, 255, 0.15); /* Marcador gigante y transparente de fondo */
+            padding: 0 6vw; /* Espacio desde los costados */
+            box-sizing: border-box;
             z-index: 0;
         }
 
+        .team-side {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .team-side .score {
+            font-size: 8vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.7); 
+            text-shadow: 0 5px 20px rgba(0,0,0,1); /* Sombra negra fuerte para resaltar */
+        }
+
         .shield {
-            width: 12vw;
-            height: auto;
-            opacity: 0.3;
+            width: 15vw;
+            max-width: 130px;
+            opacity: 0.8;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,1));
         }
 
         /* --- INSTRUCCIONES SUPERIORES --- */
@@ -117,20 +133,20 @@
             transform: rotateX(180deg);
         }
 
-        /* --- CARAS DE LA TARJETA (Bien diferenciadas del fondo) --- */
+        /* --- CARAS DE LA TARJETA --- */
         .card-face {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            background-color: #24272c; /* Gris oscuro elegante, diferente al fondo */
+            background-color: #24272c; 
             border-radius: 20px;
             display: flex;
             flex-direction: column;
             padding: 30px;
             box-sizing: border-box;
-            border: 2px solid rgba(255, 255, 255, 0.15); /* Borde claro para resaltar */
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.2); /* Sombra fuerte */
+            border: 2px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.2); 
         }
 
         .card-header {
@@ -230,8 +246,8 @@
         @media (max-width: 600px) {
             .flashcard-container { height: 450px; }
             .front .question { font-size: 22px; }
-            .score-board { font-size: 25vw; gap: 10px; }
-            .shield { width: 20vw; }
+            .team-side .score { font-size: 12vw; }
+            .shield { width: 22vw; }
         }
     </style>
 </head>
@@ -248,7 +264,6 @@
     <div class="flashcard-container">
         <div class="flashcard" id="flashcard">
             
-            <!-- Cara Frontal -->
             <div class="card-face front">
                 <div class="card-header">
                     <span id="counterFront">1/10</span>
@@ -260,7 +275,6 @@
                 <div class="flip-hint">Ver respuesta</div>
             </div>
 
-            <!-- Cara Trasera -->
             <div class="card-face back">
                 <div class="card-header">
                     <span id="counterBack">1/10</span>
@@ -284,21 +298,21 @@
     </div>
 
     <script>
-        // --- DATOS DE LAS FLASHCARDS CON CONFIGURACIÓN DE FONDOS ---
+        // --- DATOS DE LAS FLASHCARDS ---
         const cardsData = [
             {
                 pregunta: "¿En qué año comenzó la historia del mejor papá?",
                 respuesta: "1989. El año de tu nacimiento y el inicio de todo.",
                 imagen: "1_nacimiento.jpg",
-                bgColor: "linear-gradient(135deg, #1f4037 0%, #99f2c8 100%)", // Verde vibrante
+                bgColor: "linear-gradient(135deg, #1f4037 0%, #99f2c8 100%)",
                 bgType: "emojis",
-                emojis: ['🏥', '🍼', '🧸', '🛏️'] // Emojis de hospital y cuna
+                emojis: ['🏥', '🍼', '🧸', '🛏️'] 
             },
             {
                 pregunta: "Un viaje al pasado... ¿Te acordás de esta época?",
                 respuesta: "Vos en el jardín. Seguro ya eras detallista y tranquilo desde chiquito.",
                 imagen: "2_jardin.jpg",
-                bgColor: "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)", // Amarillo alegre
+                bgColor: "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)", 
                 bgType: "emojis",
                 emojis: ['🖍️', '🎨', '🧩', '🧸']
             },
@@ -306,7 +320,7 @@
                 pregunta: "18 de abril de 2004. Una fecha que cambió la historia.",
                 respuesta: "El día que conociste a mamá. Ahí se plantó la semilla de nuestra familia.",
                 imagen: "3_mama.jpg",
-                bgColor: "linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)", // Rosa romántico
+                bgColor: "linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)", 
                 bgType: "emojis",
                 emojis: ['❤️', '👩‍❤️‍👨', '💍', '✨']
             },
@@ -314,15 +328,15 @@
                 pregunta: "12 de diciembre de 2004. ¿Qué pasó de importante?",
                 respuesta: "¡Nací yo! Tiago. Tu primer gran dolor de cabeza (y orgullo).",
                 imagen: "4_nacimiento_tiago.jpg",
-                bgColor: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)", // Celeste fuerte
+                bgColor: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)", 
                 bgType: "emojis",
-                emojis: ['👶', '👨‍👩‍👦', '🍼', '💙'] // Emojis de bebé y familia
+                emojis: ['👶', '👨‍👩‍👦', '🍼', '💙'] 
             },
             {
                 pregunta: "Recuerdos de mi infancia a tu lado...",
                 respuesta: "Siempre acompañándome, enseñándome cosas y haciéndome reír con tus chistes.",
                 imagen: "5_tiago_chico.jpg",
-                bgColor: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", // Naranja cálido
+                bgColor: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", 
                 bgType: "emojis",
                 emojis: ['🚲', '🪁', '⚽', '🤣']
             },
@@ -330,7 +344,7 @@
                 pregunta: "Una nueva etapa: Mi inicio en la escuela.",
                 respuesta: "Nunca faltó tu apoyo incondicional. Un pilar en cada paso que daba.",
                 imagen: "6_escuela.jpg",
-                bgColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", // Azul brillante
+                bgColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", 
                 bgType: "emojis",
                 emojis: ['🎒', '📚', '✏️', '🏫']
             },
@@ -338,29 +352,29 @@
                 pregunta: "El laburante número uno.",
                 respuesta: "Dándolo todo en la empresa. Un ejemplo gigante de esfuerzo silencioso.",
                 imagen: "7_empresa.jpg",
-                bgColor: "linear-gradient(135deg, #434343 0%, #000000 100%)", // Gris oscuro metálico
+                bgColor: "linear-gradient(135deg, #434343 0%, #000000 100%)", 
                 bgType: "emojis",
-                emojis: ['💼', '🏢', '⚙️', '☕']
+                emojis: ['💻', '🚌', '🏢', '🚍', '🖱️'] // Emojis de colectivos y PCs
             },
             {
                 pregunta: "9 de diciembre de 2018. Madrid.",
                 respuesta: "¡Y va el tercero! Una de las mayores alegrías compartidas gracias a River. Gracias por esta pasión.",
                 imagen: "8_river.jpg",
-                bgType: "river" // Activa la lógica especial del estadio y los escudos
+                bgType: "river" // Activa el Bernabéu y marcadores laterales
             },
             {
                 pregunta: "La familia se agranda. Una nueva generación.",
-                respuesta: "El nacimiento de Mateo. Pasaste de ser un gran padre a un excelente abuelo.",
+                respuesta: "El nacimiento de Mateo. Un nuevo integrante, mi hermanito. La familia se agranda y seguís demostrando el gran papá que sos.",
                 imagen: "9_mateo.jpg",
-                bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", // Lila/Rosado vibrante
+                bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", 
                 bgType: "emojis",
-                emojis: ['👶', '👦', '👨‍👩‍👦‍👦', '🍼', '🎉'] // Familia grande y bebé
+                emojis: ['👶', '👦', '👨‍👩‍👦‍👦', '🍼', '🎉'] 
             },
             {
                 pregunta: "¿Qué te puedo decir hoy?",
                 respuesta: "Gracias por los detalles, los asados y los chistes. Sos el mejor papá del mundo. ¡Feliz día!",
                 imagen: "10_actual.jpg",
-                bgColor: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)", // Verde esperanza final
+                bgColor: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)", 
                 bgType: "emojis",
                 emojis: ['🥩', '🍷', '🏆', '❤️']
             }
@@ -380,35 +394,43 @@
 
         // Función para generar los fondos dinámicos
         function buildBackground(data) {
-            dynamicBg.innerHTML = ''; // Limpiar fondo anterior
+            dynamicBg.innerHTML = ''; 
 
             if (data.bgType === 'river') {
-                // FONDO ESPECIAL DE RIVER (Cancha + Escudos + 3-1)
+                // FONDO ESPECIAL DE RIVER (Cancha Bernabéu + Escudos a los lados)
                 dynamicBg.style.background = '#000';
                 dynamicBg.innerHTML = `
                     <div class="river-bg">
                         <div class="score-board">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_River_Plate.png" class="shield" alt="River">
-                            <span>3 - 1</span>
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Boca_Juniors_logo18.svg" class="shield" alt="Boca">
+                            <div class="team-side">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/3/3f/Logo_River_Plate.png" class="shield" alt="River">
+                                <span class="score">3</span>
+                            </div>
+                            <div class="team-side">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c9/Boca_Juniors_logo18.svg" class="shield" alt="Boca">
+                                <span class="score">1</span>
+                            </div>
                         </div>
                     </div>
                 `;
             } else if (data.bgType === 'emojis') {
-                // FONDO DE EMOJIS ANIMADOS
+                // FONDO DE EMOJIS CAYENDO (Lluvia)
                 dynamicBg.style.background = data.bgColor;
-                const emojiCount = 25; // Cantidad de emojis flotando
+                const emojiCount = 50; // Más cantidad de emojis
                 
                 for (let i = 0; i < emojiCount; i++) {
                     const emojiEl = document.createElement('div');
                     emojiEl.className = 'emoji';
-                    // Elegir un emoji aleatorio de la lista de esta tarjeta
                     emojiEl.innerText = data.emojis[Math.floor(Math.random() * data.emojis.length)];
                     
-                    // Posición y animaciones aleatorias
+                    // Posición horizontal aleatoria
                     emojiEl.style.left = Math.random() * 100 + 'vw';
-                    emojiEl.style.animationDuration = (Math.random() * 10 + 10) + 's'; // Entre 10s y 20s
-                    emojiEl.style.animationDelay = (Math.random() * 5) + 's';
+                    
+                    // Diferentes velocidades de caída (entre 7s y 15s)
+                    emojiEl.style.animationDuration = (Math.random() * 8 + 7) + 's'; 
+                    
+                    // Que no caigan todos juntos de golpe (retraso entre 0 y 10s)
+                    emojiEl.style.animationDelay = (Math.random() * 10) + 's';
                     
                     dynamicBg.appendChild(emojiEl);
                 }
