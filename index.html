@@ -70,30 +70,28 @@
             transform: translateX(-50%) translateY(0);
         }
 
-        /* --- ANIMACIONES DE EMOJIS Y ESCUDOS --- */
+        /* --- ANIMACIONES CORREGIDAS (SIN CHOQUES DE TRANSFORM) --- */
         .emoji {
             position: absolute;
             font-size: 2.4rem;
             opacity: 0.55;
-            animation: floatDown linear infinite, emojiTwist cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
-            top: -120px;
+            animation: floatDownEmoji linear infinite;
         }
 
-        /* Clase especial para que los escudos caigan sin girar tan raro */
         .shield-drop {
             position: absolute;
-            animation: floatDown linear infinite;
-            top: -120px;
+            animation: floatDownShield linear infinite;
         }
 
-        @keyframes floatDown {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(125vh); }
+        /* Caen usando la propiedad 'top' y giran usando 'transform' */
+        @keyframes floatDownEmoji {
+            0% { top: -15vh; transform: rotate(0deg); }
+            100% { top: 110vh; transform: rotate(360deg); }
         }
 
-        @keyframes emojiTwist {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(10deg); }
+        @keyframes floatDownShield {
+            0% { top: -15vh; transform: rotate(-15deg); }
+            100% { top: 110vh; transform: rotate(15deg); }
         }
 
         @keyframes backgroundShift {
@@ -111,12 +109,7 @@
             50% { box-shadow: 0 10px 24px rgba(0,0,0,0.3), 0 0 18px rgba(105, 214, 255, 0.28); }
         }
 
-        /* CORRECCIÓN: Quitamos el rotateX de acá para que no bloquee el giro */
-        @keyframes cardFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
+        /* --- TARJETAS E INTERFAZ --- */
         .top-instructions {
             color: #f8f9fb;
             font-size: 14px;
@@ -134,8 +127,7 @@
             perspective: 1500px;
             margin-bottom: 20px;
             z-index: 10;
-            /* CORRECCIÓN: La animación de flotar se la damos al contenedor */
-            animation: cardFloat 6s ease-in-out infinite; 
+            user-select: none; /* Evita que se seleccione texto al hacer clic rápido */
         }
 
         .flashcard {
@@ -147,8 +139,13 @@
             cursor: pointer;
         }
 
+        /* Efecto sutil al pasar el mouse (sin marear) */
+        .flashcard:hover {
+            transform: scale(1.02);
+        }
+
         .flashcard.flipped {
-            transform: rotateX(180deg);
+            transform: rotateX(180deg) scale(1);
         }
 
         .card-face {
@@ -275,6 +272,7 @@
         .btn-nav:disabled {
             opacity: 0.25;
             cursor: not-allowed;
+            transform: scale(1);
         }
 
         @media (max-width: 600px) {
@@ -290,16 +288,14 @@
 </head>
 <body>
 
-    <!-- Capa de fondos dinámicos -->
     <div id="dynamic-bg"></div>
     <div id="confetti-container"></div>
     <div class="celebration-text" id="celebrationText">¡Gracias por ser el mejor papá!</div>
 
     <div class="top-instructions">
-        Presiona "Espacio" para voltear la tarjeta, "← / →" para navegar
+        Presiona "Espacio" o haz clic en la tarjeta para voltearla
     </div>
 
-    <!-- Contenedor de Tarjeta -->
     <div class="flashcard-container">
         <div class="flashcard" id="flashcard">
             
@@ -330,7 +326,6 @@
         </div>
     </div>
 
-    <!-- Controles -->
     <div class="controls">
         <button class="btn-nav" id="btnPrev" onclick="prevCard()">←</button>
         <button class="btn-nav" id="btnNext" onclick="nextCard()">→</button>
@@ -399,7 +394,7 @@
                 pregunta: "9 de diciembre de 2018. Madrid.",
                 respuesta: "¡Y va el tercero! Una de las mayores alegrías compartidas gracias a River. Gracias por esta pasión.",
                 imagen: "8_river.jpg",
-                bgType: "river" // ACTIVA EL FONDO BLANCO Y ROJO CON ESCUDOS
+                bgType: "river"
             },
             {
                 pregunta: "La familia se agranda. Una nueva generación.",
@@ -441,14 +436,12 @@
             dynamicBg.innerHTML = '';
 
             if (data.bgType === 'river') {
-                // Fondo River: Blanco con banda roja cruzada
                 dynamicBg.style.background = 'linear-gradient(to bottom left, #ffffff 40%, #E30613 40%, #E30613 60%, #ffffff 60%)';
                 
-                // Lluvia de escudos de River
                 for (let i = 0; i < 35; i++) {
                     const shieldEl = document.createElement('img');
                     shieldEl.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Logo_River_Plate.png/500px-Logo_River_Plate.png';
-                    shieldEl.className = 'shield-drop'; // Usamos la clase para que caigan limpios
+                    shieldEl.className = 'shield-drop';
                     shieldEl.style.width = `${randomBetween(35, 75)}px`;
                     shieldEl.style.left = `${randomBetween(-5, 95)}vw`;
                     shieldEl.style.opacity = `${randomBetween(0.6, 0.95)}`;
@@ -457,8 +450,8 @@
                     dynamicBg.appendChild(shieldEl);
                 }
             } else if (data.bgType === 'emojis') {
-                // El código original de emojis que tenías
                 dynamicBg.style.background = data.bgColor;
+                
                 for (let i = 0; i < 45; i++) {
                     const emojiEl = document.createElement('div');
                     emojiEl.className = 'emoji';
@@ -468,7 +461,6 @@
                     emojiEl.style.opacity = `${randomBetween(0.3, 0.8)}`;
                     emojiEl.style.animationDuration = `${randomBetween(8, 14)}s`;
                     emojiEl.style.animationDelay = `${randomBetween(0, 12)}s`;
-                    emojiEl.style.transform = `rotate(${randomBetween(-30, 30)}deg)`;
                     dynamicBg.appendChild(emojiEl);
                 }
             }
@@ -508,10 +500,13 @@
             questionText.innerText = data.pregunta;
             answerText.innerText = data.respuesta;
             cardImage.src = data.imagen;
+            
             const textCounter = `${currentIndex + 1}/${cardsData.length}`;
             counterFront.innerText = textCounter;
             counterBack.innerText = textCounter;
+            
             buildBackground(data);
+            
             btnPrev.disabled = currentIndex === 0;
             btnNext.disabled = currentIndex === cardsData.length - 1;
             showCelebrationText(false);
@@ -520,12 +515,13 @@
         function flipCard() {
             flashcard.classList.toggle('flipped');
             const data = cardsData[currentIndex];
+            
             if (flashcard.classList.contains('flipped')) {
                 if (currentIndex === cardsData.length - 1) {
                     showCelebrationText(true);
                     launchConfetti(40);
                 } else if (data.bgType === 'river') {
-                    launchConfetti(20); // Confeti extra para River
+                    launchConfetti(20);
                 }
             }
         }
@@ -560,6 +556,7 @@
             }
         }
 
+        // --- ASIGNACIÓN DE EVENTOS ---
         flashcard.addEventListener('click', flipCard);
 
         document.addEventListener('keydown', (e) => {
@@ -573,6 +570,7 @@
             }
         });
 
+        // Iniciar
         updateUI();
     </script>
 </body>
