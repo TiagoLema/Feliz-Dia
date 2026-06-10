@@ -14,12 +14,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            /* Se usa dvh para que la barra de navegación del celular no tape nada */
             min-height: 100vh;
-            min-height: 100dvh; 
+            min-height: 100dvh;
             color: #ffffff;
             overflow: hidden;
-            background-color: #111; 
+            background-color: #070911;
+            background-image:
+                radial-gradient(circle at top left, rgba(169, 234, 255, 0.18), transparent 20%),
+                radial-gradient(circle at bottom right, rgba(255, 204, 92, 0.16), transparent 18%);
         }
 
         /* --- CONTENEDOR DE FONDOS DINÁMICOS --- */
@@ -30,42 +32,106 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            transition: all 0.8s ease;
+            transition: background 0.8s ease;
             overflow: hidden;
+            background: radial-gradient(circle at 25% 25%, rgba(255,255,255,0.08), transparent 18%),
+                        radial-gradient(circle at 80% 15%, rgba(0,255,191,0.1), transparent 16%),
+                        radial-gradient(circle at 70% 75%, rgba(255,100,200,0.08), transparent 14%);
+            animation: backgroundShift 15s ease infinite;
         }
 
-        /* Animación de Emojis Cayendo (Lluvia) */
+        #confetti-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 5;
+        }
+
+        .celebration-text {
+            position: absolute;
+            top: 12vh;
+            left: 50%;
+            transform: translateX(-50%) translateY(-10px);
+            color: #ffe28a;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            text-shadow: 0 0 15px rgba(255, 226, 138, 0.85), 0 0 30px rgba(255, 182, 55, 0.55);
+            opacity: 0;
+            z-index: 10;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            pointer-events: none;
+        }
+
+        .celebration-text.visible {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .emoji {
             position: absolute;
-            font-size: 2.8rem;
-            opacity: 0.5;
-            animation: floatDown linear infinite;
-            top: -100px;
+            font-size: 2.4rem;
+            opacity: 0.55;
+            animation: floatDown linear infinite, emojiTwist cubic-bezier(0.4, 0.0, 0.2, 1) infinite;
+            top: -120px;
         }
 
         @keyframes floatDown {
             0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(120vh) rotate(360deg); }
+            100% { transform: translateY(125vh) rotate(360deg); }
         }
 
-        /* Fondo especial de River Plate (Bernabéu Panorámico) */
+        @keyframes emojiTwist {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { background-position: 0% 0%, 100% 10%, 70% 100%; }
+            50% { background-position: 10% 20%, 85% 5%, 60% 90%; }
+        }
+
+        @keyframes confettiFall {
+            0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { box-shadow: 0 10px 20px rgba(0,0,0,0.25), 0 0 0 rgba(105, 214, 255, 0); }
+            50% { box-shadow: 0 10px 24px rgba(0,0,0,0.3), 0 0 18px rgba(105, 214, 255, 0.28); }
+        }
+
+        @keyframes cardFloat {
+            0%, 100% { transform: translateY(0) rotateX(0deg); }
+            50% { transform: translateY(-10px) rotateX(0deg); }
+        }
+
         .river-bg {
             width: 100%;
             height: 100%;
             position: relative;
-            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Estadio_Santiago_Bernab%C3%A9u_panor%C3%A1mica.jpg/1280px-Estadio_Santiago_Bernab%C3%A9u_panor%C3%A1mica.jpg'); 
+            background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Estadio_Santiago_Bernab%C3%A9u_panor%C3%A1mica.jpg/1280px-Estadio_Santiago_Bernab%C3%A9u_panor%C3%A1mica.jpg');
             background-size: cover;
             background-position: center;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        
+
         .river-bg::before {
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.75); 
+            background: rgba(0, 0, 0, 0.75);
+        }
+
+        .river-bg::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 20%, rgba(255,255,255,0.12), transparent 18%);
         }
 
         .score-board {
@@ -73,9 +139,9 @@
             width: 100%;
             height: 100%;
             display: flex;
-            justify-content: space-between; 
+            justify-content: space-between;
             align-items: center;
-            padding: 0 5vw; 
+            padding: 0 5vw;
             box-sizing: border-box;
             z-index: 0;
         }
@@ -90,29 +156,27 @@
         .team-side .score {
             font-size: 8vw;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.8); 
-            text-shadow: 0 5px 20px rgba(0,0,0,1); 
+            color: rgba(255, 255, 255, 0.85);
+            text-shadow: 0 5px 20px rgba(0,0,0,1);
         }
 
         .shield {
             width: 15vw;
             max-width: 120px;
-            opacity: 0.85;
-            filter: drop-shadow(0 5px 15px rgba(0,0,0,1));
+            opacity: 0.88;
+            filter: drop-shadow(0 5px 18px rgba(0,0,0,1));
         }
 
-        /* --- INSTRUCCIONES SUPERIORES --- */
         .top-instructions {
-            color: rgba(255, 255, 255, 0.8);
+            color: #f8f9fb;
             font-size: 14px;
             margin-bottom: 20px;
             text-align: center;
             letter-spacing: 0.5px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            text-shadow: 0 3px 10px rgba(0,0,0,0.45);
             z-index: 10;
         }
 
-        /* --- CONTENEDOR DE LA TARJETA (3D) --- */
         .flashcard-container {
             width: 90%;
             max-width: 600px;
@@ -129,33 +193,46 @@
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             cursor: pointer;
+            animation: cardFloat 6s ease-in-out infinite;
+        }
+
+        .flashcard:hover {
+            transform: translateY(-3px);
         }
 
         .flashcard.flipped {
             transform: rotateX(180deg);
         }
 
-        /* --- CARAS DE LA TARJETA --- */
         .card-face {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            background-color: #24272c; 
+            background-color: rgba(36, 39, 44, 0.95);
             border-radius: 20px;
             display: flex;
             flex-direction: column;
             padding: 25px;
             box-sizing: border-box;
-            border: 2px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6), 0 0 20px rgba(0,0,0,0.2); 
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.55), 0 0 20px rgba(0,0,0,0.18);
+            overflow: hidden;
+        }
+
+        .card-face::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, rgba(255,255,255,0.08), transparent 25%);
+            pointer-events: none;
         }
 
         .card-header {
             display: flex;
             justify-content: space-between;
             font-size: 14px;
-            color: #a0aab2;
+            color: #c7d0dc;
             font-weight: 500;
         }
 
@@ -166,97 +243,103 @@
             align-items: center;
             justify-content: center;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
         .front .question {
-            font-size: 26px;
-            line-height: 1.4;
-            font-weight: 500;
+            font-size: 28px;
+            line-height: 1.35;
+            font-weight: 600;
+            letter-spacing: 0.02em;
         }
 
         .back {
             transform: rotateX(180deg);
-            background-color: #1e2024;
+            background-color: #16181d;
         }
 
         .back .photo-container {
             width: 100%;
             height: 180px;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            margin-bottom: 15px;
-            background-color: #111;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
         }
 
         .back img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: saturate(1.05) contrast(1.05);
         }
 
         .back .answer {
             font-size: 17px;
-            line-height: 1.5;
-            color: #e0e6ed;
+            line-height: 1.6;
+            color: #e6edf5;
+            max-width: 100%;
         }
 
         .flip-hint {
             font-size: 13px;
-            color: #a0aab2;
+            color: #b8c1cc;
             margin-top: auto;
             text-align: center;
-            opacity: 0.6;
+            opacity: 0.72;
         }
 
-        /* --- CONTROLES INFERIORES --- */
         .controls {
             display: flex;
             gap: 20px;
             align-items: center;
             z-index: 10;
-            padding-bottom: 15px; /* Margen de seguridad para celulares */
+            padding-bottom: 15px;
         }
 
         .btn-nav {
             width: 55px;
             height: 55px;
             border-radius: 50%;
-            background-color: #232528;
-            border: 2px solid rgba(255,255,255,0.2);
+            background-color: rgba(35, 37, 40, 0.96);
+            border: 2px solid rgba(255,255,255,0.18);
             color: white;
             font-size: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            -webkit-tap-highlight-color: transparent; /* Quita el recuadro azul al tocar en celu */
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+            animation: buttonGlow 4.5s ease-in-out infinite;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .btn-nav:hover:not(:disabled) {
-            background-color: #3a3d42;
-            transform: scale(1.1);
+            background-color: rgba(60, 64, 72, 1);
+            transform: scale(1.08);
         }
 
         .btn-nav:disabled {
-            opacity: 0.3;
+            opacity: 0.25;
             cursor: not-allowed;
         }
 
-        /* AJUSTES ESPECÍFICOS PARA CELULARES */
         @media (max-width: 600px) {
-            .flashcard-container { 
-                height: 55vh; /* Se adapta dinámicamente al tamaño de la pantalla */
-                max-height: 420px; 
+            .flashcard-container {
+                height: 55vh;
+                max-height: 420px;
             }
             .front .question { font-size: 22px; }
             .team-side .score { font-size: 12vw; }
             .shield { width: 22vw; }
-            .controls { margin-top: -5px; } /* Sube las flechas un poco más */
+            .controls { margin-top: -5px; }
+            .celebration-text { top: 8vh; font-size: 1.05rem; }
         }
     </style>
 </head>
@@ -264,6 +347,8 @@
 
     <!-- Capa de fondos dinámicos -->
     <div id="dynamic-bg"></div>
+    <div id="confetti-container"></div>
+    <div class="celebration-text" id="celebrationText">¡Gracias por ser el mejor papá!</div>
 
     <div class="top-instructions">
         Presiona "Espacio" para voltear la tarjeta, "← / →" para navegar
@@ -315,13 +400,13 @@
                 imagen: "1_nacimiento.jpg",
                 bgColor: "linear-gradient(135deg, #1f4037 0%, #99f2c8 100%)",
                 bgType: "emojis",
-                emojis: ['🏥', '🍼', '🧸', '🛏️'] 
+                emojis: ['🏥', '🍼', '🧸', '🛏️']
             },
             {
                 pregunta: "Un viaje al pasado... ¿Te acordás de esta época?",
                 respuesta: "Vos en el jardín. Seguro ya eras detallista y tranquilo desde chiquito.",
                 imagen: "2_jardin.jpg",
-                bgColor: "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)", 
+                bgColor: "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)",
                 bgType: "emojis",
                 emojis: ['🖍️', '🎨', '🧩', '🧸']
             },
@@ -329,7 +414,7 @@
                 pregunta: "18 de abril de 2004. Una fecha que cambió la historia.",
                 respuesta: "El día que conociste a mamá. Ahí se plantó la semilla de nuestra familia.",
                 imagen: "3_mama.jpg",
-                bgColor: "linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)", 
+                bgColor: "linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)",
                 bgType: "emojis",
                 emojis: ['❤️', '👩‍❤️‍👨', '💍', '✨']
             },
@@ -337,15 +422,15 @@
                 pregunta: "12 de diciembre de 2004. ¿Qué pasó de importante?",
                 respuesta: "¡Nací yo! Tiago. Tu primer gran dolor de cabeza (y orgullo).",
                 imagen: "4_nacimiento_tiago.jpg",
-                bgColor: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)", 
+                bgColor: "linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)",
                 bgType: "emojis",
-                emojis: ['👶', '👨‍👩‍👦', '🍼', '💙'] 
+                emojis: ['👶', '👨‍👩‍👦', '🍼', '💙']
             },
             {
                 pregunta: "Recuerdos de mi infancia a tu lado...",
                 respuesta: "Siempre acompañándome, enseñándome cosas y haciéndome reír con tus chistes.",
                 imagen: "5_tiago_chico.jpg",
-                bgColor: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)", 
+                bgColor: "linear-gradient(135deg, #f6d365 0%, #fda085 100%)",
                 bgType: "emojis",
                 emojis: ['🚲', '🪁', '⚽', '🤣']
             },
@@ -353,7 +438,7 @@
                 pregunta: "Una nueva etapa: Mi inicio en la escuela.",
                 respuesta: "Nunca faltó tu apoyo incondicional. Un pilar en cada paso que daba.",
                 imagen: "6_escuela.jpg",
-                bgColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)", 
+                bgColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
                 bgType: "emojis",
                 emojis: ['🎒', '📚', '✏️', '🏫']
             },
@@ -361,7 +446,7 @@
                 pregunta: "El laburante número uno.",
                 respuesta: "Dándolo todo en la empresa. Un ejemplo gigante de esfuerzo silencioso.",
                 imagen: "7_empresa.jpg",
-                bgColor: "linear-gradient(135deg, #434343 0%, #000000 100%)", 
+                bgColor: "linear-gradient(135deg, #434343 0%, #000000 100%)",
                 bgType: "emojis",
                 emojis: ['💻', '🚌', '🏢', '🚍', '🖱️']
             },
@@ -369,21 +454,21 @@
                 pregunta: "9 de diciembre de 2018. Madrid.",
                 respuesta: "¡Y va el tercero! Una de las mayores alegrías compartidas gracias a River. Gracias por esta pasión.",
                 imagen: "8_river.jpg",
-                bgType: "river" 
+                bgType: "river"
             },
             {
                 pregunta: "La familia se agranda. Una nueva generación.",
                 respuesta: "El nacimiento de Mateo. Un nuevo integrante, mi hermanito. La familia se agranda y seguís demostrando el gran papá que sos.",
                 imagen: "9_mateo.jpg",
-                bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)", 
+                bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
                 bgType: "emojis",
-                emojis: ['👶', '👦', '👨‍👩‍👦‍👦', '🍼', '🎉'] 
+                emojis: ['👶', '👦', '👨‍👩‍👦‍👦', '🍼', '🎉']
             },
             {
                 pregunta: "¿Qué te puedo decir hoy?",
                 respuesta: "Gracias por los detalles, los asados y los chistes. Sos el mejor papá del mundo. ¡Feliz día!",
                 imagen: "10_actual.jpg",
-                bgColor: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)", 
+                bgColor: "linear-gradient(135deg, #11998e 0%, #38ef7d 100%)",
                 bgType: "emojis",
                 emojis: ['🥩', '🍷', '🏆', '❤️']
             }
@@ -400,13 +485,18 @@
         const btnPrev = document.getElementById('btnPrev');
         const btnNext = document.getElementById('btnNext');
         const dynamicBg = document.getElementById('dynamic-bg');
+        const confettiContainer = document.getElementById('confetti-container');
+        const celebrationText = document.getElementById('celebrationText');
+
+        function randomBetween(min, max) {
+            return Math.random() * (max - min) + min;
+        }
 
         function buildBackground(data) {
-            dynamicBg.innerHTML = ''; 
+            dynamicBg.innerHTML = '';
 
             if (data.bgType === 'river') {
-                // FONDO ESPECIAL DE RIVER - Usando PNGs de alta compatibilidad para celulares
-                dynamicBg.style.background = '#000';
+                dynamicBg.style.background = '#08090d';
                 dynamicBg.innerHTML = `
                     <div class="river-bg">
                         <div class="score-board">
@@ -423,51 +513,85 @@
                 `;
             } else if (data.bgType === 'emojis') {
                 dynamicBg.style.background = data.bgColor;
-                const emojiCount = 50; 
-                
-                for (let i = 0; i < emojiCount; i++) {
+                for (let i = 0; i < 45; i++) {
                     const emojiEl = document.createElement('div');
                     emojiEl.className = 'emoji';
                     emojiEl.innerText = data.emojis[Math.floor(Math.random() * data.emojis.length)];
-                    
-                    emojiEl.style.left = Math.random() * 100 + 'vw';
-                    emojiEl.style.animationDuration = (Math.random() * 8 + 7) + 's'; 
-                    emojiEl.style.animationDelay = (Math.random() * 10) + 's';
-                    
+                    emojiEl.style.left = `${randomBetween(-10, 100)}vw`;
+                    emojiEl.style.fontSize = `${randomBetween(1.8, 3.2)}rem`;
+                    emojiEl.style.opacity = `${randomBetween(0.3, 0.8)}`;
+                    emojiEl.style.animationDuration = `${randomBetween(8, 14)}s`;
+                    emojiEl.style.animationDelay = `${randomBetween(0, 12)}s`;
+                    emojiEl.style.transform = `rotate(${randomBetween(-30, 30)}deg)`;
                     dynamicBg.appendChild(emojiEl);
                 }
             }
         }
 
+        function createConfettiPiece(color) {
+            const element = document.createElement('span');
+            element.className = 'confetti-piece';
+            element.style.position = 'absolute';
+            element.style.width = `${randomBetween(8, 14)}px`;
+            element.style.height = `${randomBetween(10, 18)}px`;
+            element.style.background = color;
+            element.style.left = `${randomBetween(20, 80)}vw`;
+            element.style.top = `${randomBetween(-10, -4)}vh`;
+            element.style.opacity = randomBetween(0.7, 1);
+            element.style.borderRadius = '3px';
+            element.style.transform = `rotate(${randomBetween(0, 360)}deg)`;
+            element.style.animation = `confettiFall ${randomBetween(2.5, 4.5)}s ease forwards`;
+            return element;
+        }
+
+        function launchConfetti(count = 30) {
+            const colors = ['#ffdd57', '#ff5c8a', '#38d9a9', '#74c0fc', '#d9480f', '#845ef7'];
+            for (let i = 0; i < count; i++) {
+                const piece = createConfettiPiece(colors[Math.floor(Math.random() * colors.length)]);
+                confettiContainer.appendChild(piece);
+                piece.addEventListener('animationend', () => piece.remove());
+            }
+        }
+
+        function showCelebrationText(visible) {
+            celebrationText.classList.toggle('visible', visible);
+        }
+
         function updateUI() {
             const data = cardsData[currentIndex];
-            
             questionText.innerText = data.pregunta;
             answerText.innerText = data.respuesta;
             cardImage.src = data.imagen;
-            
             const textCounter = `${currentIndex + 1}/${cardsData.length}`;
             counterFront.innerText = textCounter;
             counterBack.innerText = textCounter;
-
             buildBackground(data);
-
             btnPrev.disabled = currentIndex === 0;
             btnNext.disabled = currentIndex === cardsData.length - 1;
+            showCelebrationText(false);
         }
 
         function flipCard() {
             flashcard.classList.toggle('flipped');
+            const data = cardsData[currentIndex];
+            if (flashcard.classList.contains('flipped')) {
+                if (currentIndex === cardsData.length - 1) {
+                    showCelebrationText(true);
+                    launchConfetti(40);
+                } else if (data.bgType === 'river') {
+                    launchConfetti(20);
+                }
+            }
         }
 
         function nextCard() {
             if (currentIndex < cardsData.length - 1) {
-                if(flashcard.classList.contains('flipped')) {
+                if (flashcard.classList.contains('flipped')) {
                     flashcard.classList.remove('flipped');
                     setTimeout(() => {
                         currentIndex++;
                         updateUI();
-                    }, 400); 
+                    }, 400);
                 } else {
                     currentIndex++;
                     updateUI();
@@ -477,7 +601,7 @@
 
         function prevCard() {
             if (currentIndex > 0) {
-                if(flashcard.classList.contains('flipped')) {
+                if (flashcard.classList.contains('flipped')) {
                     flashcard.classList.remove('flipped');
                     setTimeout(() => {
                         currentIndex--;
@@ -490,7 +614,6 @@
             }
         }
 
-        // Eventos
         flashcard.addEventListener('click', flipCard);
 
         document.addEventListener('keydown', (e) => {
@@ -504,9 +627,7 @@
             }
         });
 
-        // Iniciar
         updateUI();
-
     </script>
 </body>
 </html>
