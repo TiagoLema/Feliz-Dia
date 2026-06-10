@@ -344,14 +344,14 @@
             },
             {
                 pregunta: "Un viaje al pasado... ¿Te acordás de esta época?",
-                respuesta: "Vos en el jardín. Seguro ya eras detallista y tranquilo desde chiquito.",
+                respuesta: "Vos en el jardín. Seguro ya eras igual desde chiquito.",
                 imagen: "2_jardin.jpg",
                 bgColor: "linear-gradient(135deg, #fceabb 0%, #f8b500 100%)",
                 bgType: "emojis",
                 emojis: ['🖍️', '🎨', '🧩', '🧸']
             },
             {
-                pregunta: "18 de abril de 2004. Una fecha que cambió la historia.",
+                pregunta: "Principios de 2005. Una fecha que cambió la historia.",
                 respuesta: "El día que conociste a mamá. Ahí se plantó la semilla de nuestra familia.",
                 imagen: "3_mama.jpg",
                 bgColor: "linear-gradient(135deg, #ff758c 0%, #ff7eb3 100%)",
@@ -398,7 +398,7 @@
             },
             {
                 pregunta: "La familia se agranda. Una nueva generación.",
-                respuesta: "El nacimiento de Mateo. Miralo de fiero que era de chiquito.",
+                respuesta: "El nacimiento de Mateo. Miralo de fiero q era de chiquito.",
                 imagen: "9_mateo.jpg",
                 bgColor: "linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)",
                 bgType: "emojis",
@@ -560,12 +560,13 @@
         flashcard.addEventListener('click', flipCard);
 
         document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') {
+            const isSpace = e.code === 'Space' || e.code === 'Spacebar' || e.key === ' ';
+            if (isSpace) {
                 e.preventDefault();
                 flipCard();
-            } else if (e.code === 'ArrowRight') {
+            } else if (e.code === 'ArrowRight' || e.key === 'ArrowRight') {
                 nextCard();
-            } else if (e.code === 'ArrowLeft') {
+            } else if (e.code === 'ArrowLeft' || e.key === 'ArrowLeft') {
                 prevCard();
             }
         });
